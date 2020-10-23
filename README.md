@@ -21,7 +21,7 @@ Get in your bastion machine in AWS amazon and install terrafom tool to deploy yo
     $ terraform -v
 
 
-##Setups variables 
+## Setups variables 
 Download the project and be careful with following properties which are in file:
 lambda/faas-CataloguesGet/variable.tf
 * role_arn: replace your id tenant in the defult field
@@ -30,7 +30,7 @@ apigateway/openapi-public/variable.tf
 * aws_tenant: replace your id tenant in the defult field
 
 
-##Deploy your infrastructure
+## Deploy your infrastructure
 Go to lambda/faas-CataloguesGet folder and use terraform to deploy your lambda
 
     $ cd lambda/faas-CataloguesGet
@@ -52,7 +52,7 @@ Go to apigateway/openapi-public folder and use terraform to deploy your APIGatew
     $ terrafom apply
 
 
-##Generete your code with swagger-codegen
+## Generete your code with swagger-codegen
 Go to apigateway/openapi-public folder and execute the following command line:
 
     $ java -jar assent/swagger-codegen-cli.jar generate \
