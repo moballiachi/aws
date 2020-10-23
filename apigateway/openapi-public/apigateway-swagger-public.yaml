@@ -1,0 +1,441 @@
+swagger: 3.0.0
+info:
+  title: openapi-public
+  description: API Gateway AWS Service which belongs to OpenAPI Specification, this service is composed by all signature to handler all information about stores and his products.
+    You can find more information about its usefull in [https://medium.com/@].
+  termsOfService: https://aws.amazon.com/paas/getting-started/
+  contact:
+    name: Company Support Center
+    url: https://aws.amazon.com/aws-swagger/getting-started/
+    email: moballiachi@gmail.com
+  license:
+    name: Company API License
+    url: https://aws.amazon.com/aws-swagger/getting-started/
+  version: 1.0.0
+tags:
+- name: Catalogues
+  description: Operations relate to create, update, query and others services associate with this data.
+- name: Store
+  description: Operations relate to manage information about stores.
+
+paths:
+  /catalogue:
+    get:
+      tags:
+      - Catalogues
+      summary: Gets all kinds of catalogues available on your store.
+      description: Make a query to get all catalogues registrered in your store.
+      operationId: CataloguesGET
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: Catalogue information.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/schemas/XCorrelationID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CataloguesGETRs'
+              example:
+                catalogues:
+                - catalogue:
+                    code: S001
+                    name: Shoes
+                - catalogue:
+                    code: P001
+                    name: Pants
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+      x-amazon-apigateway-auth:
+        type: none
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${aws_tenant}:function:faas-CataloguesGet/invocations
+        credentials: arn:aws:iam::${aws_tenant}:role/apigateway-role
+        httpMethod: GET
+        IntegrationHttpMethod: GET
+        passthroughBehavior: when_no_templates
+        payloadFormatVersion: 1.0
+
+    post:
+      tags:
+        - Catalogues
+      summary: Add a new catalogue.
+      description: Add a new catalogue.
+      operationId: CataloguePST
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: false
+      requestBody:
+        description: Metadata information catalogue.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CataloguePSTRq'
+            example:
+              catalogue:
+                code: D003
+                name: Dress
+      responses:
+        201:
+          description: Catalogue metadata information have been added.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/schemas/XCorrelationID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CataloguePSTRs'
+              example:
+                catalogue:
+                code: D003
+                name: Dress
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+      x-amazon-apigateway-auth:
+        type: none
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "code" : 200
+            }
+
+  /store:
+    post:
+      tags:
+        - Store
+      summary: Add a new store
+      description: Add information relate to a new store.
+      operationId: StorePST
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: false
+      requestBody:
+        description: Store information.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorePSTRq'
+            example:
+              environment:
+                code: 1.093
+                name: Angie Katherine Salamanca Scarpetta Store
+                description: Dress and pants made in Pitalito.
+                catalogues:
+                  - code: P001
+                  - code: D002
+      responses:
+        201:
+          description: Store have been added successfully.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/schemas/XCorrelationID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorePSTRs'
+              example:
+                store:
+                  code: 1.093
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+      x-amazon-apigateway-auth:
+        type: none
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "code" : 200
+            }
+            
+  /store/{code}:
+    get:
+      tags:
+        - Store
+      summary: Get store's information by its code.
+      description: Get whole information about store which is registered by its code.
+      operationId: StoreGETByCode
+      # HEADER REQUEST
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: false
+      # PATH PARAMS
+        - name: code
+          in: path
+          required: true
+          description: Store code.
+          schema:
+            type : string
+            minimum: 1
+      responses:
+        200:
+          description: Store information.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/schemas/XCorrelationID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreGETByCodeRs'
+              example:
+                code: 1.093
+                name: Angie Katherine Salamanca Scarpetta Store
+                description: Dress and pants made in Pitalito.
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+      x-amazon-apigateway-auth:
+        type: none
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "code" : 200
+            }
+
+components:
+
+  headers:
+    Authorization:
+      description: SON Web Token (JWT) entregado al usuario en la autenticación.
+      schema:
+        type: string
+
+  schemas:
+    Catalogue:
+      type: object
+      properties:
+        code:
+          maximum: 64
+          minimum: 1
+          type: string
+          description: Catalogue code.
+        name:
+          maxLength: 128
+          minLength: 1
+          type: string
+          description: Catalogue description.
+      description: Catalogue metadata.
+
+    Store:
+      description: Store information.
+      type: object
+      properties:
+        code:
+          description: Store code.
+          type: string
+          minimum: 1
+          maximum: 16
+        name:
+          description: Store name.
+          type: string
+          minLength: 1
+          maxLength:  128
+        description:
+          description: Store description.
+          type: string
+          maxLength:  512
+        catalogues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Catalogue'
+
+    CataloguesGETRs:
+      required:
+      - catalogues
+      type: object
+      properties:
+        catalogues:
+          type: array
+          items:
+            required:
+            - catalogue
+            - code
+            - name
+            type: object
+            allOf:
+            - $ref: '#/components/schemas/Catalogue'
+            - type: object
+      description: Responses about all catalogues available in an store.
+
+    CataloguePSTRq:
+      description: Information about the new catalogue which will be added.
+      type: object
+      required:
+        - catalogue
+      properties:
+        catalogue:
+          allOf:
+            - $ref: '#/components/schemas/Catalogue'
+            - type: object
+          required:
+            - code
+            - name
+            - catalogue
+
+    CataloguePSTRs:
+      description: Creation catalogue response.
+      type: object
+      required:
+        - catalogue
+      properties:
+        catalogue:
+          allOf:
+            - $ref: '#/components/schemas/Catalogue'
+            - type: object
+          required:
+            - code
+
+    StorePSTRq:
+      description: Information to add a new store.
+      type: object
+      required:
+        - store
+      properties:
+        store:
+          allOf:
+            - $ref: '#/components/schemas/Store'
+            - type: object
+          required:
+            - code
+            - name
+            - description
+            - catalogues
+
+    StorePSTRs:
+      description: Response about information added successfully.
+      type: object
+      required:
+        - store
+      properties:
+        store:
+          allOf:
+            - $ref: '#/components/schemas/Store'
+            - type: object
+          required:
+            - code
+
+    StoreGETByCodeRs:
+      description: Response about store's information by its code.
+      type: object
+      required:
+        - store
+      properties:
+        store:
+            allOf:
+              - $ref: '#/components/schemas/Store'
+              - type: object
+            required:
+              - code
+              - name
+              - description
+
+    XCorrelationID:
+      type: object
+      description: ID where the response and request are associated.
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+
+  responses:
+    cors:
+      description: "200 response"
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: "string"
+        Access-Control-Allow-Methods:
+          schema:
+            type: "string"
+        Access-Control-Max-Age:
+          schema:
+            type: "string"
+        Access-Control-Allow-Headers:
+          schema:
+            type: "string"
+      content:
+        application/json:
+          schema:
+            title: "Empty Schema"
+            type: "object"
+            
+    500InternalServerError:
+      description: Server encountered an unexpected condition that prevented it from fulfilling the request.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/schemas/XCorrelationID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+              code: 500
+              message: Server encountered an unexpected condition that prevented it from fulfilling the request.
+    400BadRequest:
+      description: Message has not a format correct.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/schemas/XCorrelationID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+              code: 400
+              message: Message has not a format correct.
+    401Unauthorized:
+      description: Authorization request user is not available.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/schemas/XCorrelationID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+              code: 401
+              message: Authorization request user is not available.
